@@ -4,6 +4,7 @@ from reportlab.lib.pagesizes import landscape, A4
 from reportlab.lib import colors
 from reportlab.platypus import Table, TableStyle
 from reportlab.pdfbase.ttfonts import TTFont
+from reportlab  import graphics
 
 
 #-------------------------------INITIALIZE----------------------------------
@@ -13,12 +14,14 @@ canvas.Canvas.setPageSize(pdf, (landscape(A4))) #8.27 x 11.69 inches
 
 #--------------------------------PAGE 1: OFFENSE----------------------------
 # Add Title and Subtitle
-pdf.drawCentredString(5.845*inch, 7.75*inch, "POST GAME SHORT REPORT")
-pdf.drawCentredString(5.845*inch, 7.55*inch, "Golden Eagles vs. NULL")
+visname = "Butler"              # TODO: Automate this
+homename = "Marquette"
+pdf.drawCentredString(5.845*inch, 8*inch, "POST GAME SHORT REPORT")
+pdf.drawCentredString(5.845*inch, 7.75*inch, homename + " vs. " + visname)
 
-#****Offensive Tempo Analysis (OTA)
+#*****Offensive Tempo Analysis (OTA)*****
 # Section Title String
-pdf.drawString(0.5*inch, 6.75*inch, "OFFENSIVE TEMPO ANALYSIS")
+pdf.drawString(0.2*inch, 6.75*inch, "OFFENSIVE TEMPO ANALYSIS")
 
 # Variable Declaration for OTA
 labels = None
@@ -41,20 +44,61 @@ data = [headers,
         ["Overall",             100, 0, 0, 0, 0, 0, None],
         [None, None,            str(0.0)+" PPP", str(0.0)+" PPP", str(0.0)+" PPP", str(0.0)+" PPP", str(0.0)+" PPP", None]]
 
-t=Table(data)#, colWidths=12*mm, rowHeights=5*mm) # Create Table
+t=Table(data)#, colWidths=9*mm, rowHeights=5*mm) # Create Table
 t.setStyle(TableStyle([
         ('ALIGN',(0,0),(-1,-1),'CENTER'), # Alignment for main table
         ('ALIGN', (0,0),(0,8),'RIGHT'), # Row Label Alignment
         ('VALIGN',(0,0),(-1,-1),'MIDDLE'), # Vertical Alignment
-        ('INNERGRID', (2,1), (-2, -2), 0.25, colors.wheat), # Add Grid
-        ('BOX', (2,1), (-2,-2), 0.25, colors.black), # Add Box
+        ('INNERGRID', (2,1), (-2, -2), 0.45, colors.gold), # Add Grid
+        ('BOX', (2,1), (-2,-2), 0.25, colors.gold), # Add Box
         ('BACKGROUND', (2,1), (-2, -2), colors.navy),
-        ('TEXTCOLOR', (2,1), (-2,-2), colors.wheat)
+        ('TEXTCOLOR', (2,1), (-2,-2), colors.wheat),
+        ('FONTSIZE', (0,0), (-1,-1), 7)
 ]))
 
-t.wrapOn(pdf, 1.1*inch, 2.81*inch) # Determine table size
-t.drawOn(pdf, 0.25*inch, 4.5*inch) # Determine table coords and draw
+t.wrapOn(pdf, 0.5*inch, 0.5*inch) # Determine table size
+t.drawOn(pdf, 0*inch, 4.5*inch) # Determine table coords and draw
 
+#*****Offensive Efficiency Analysis*****
+# Section Title String
+pdf.drawString(5.75*inch, 6.75*inch, "OFFENSIVE EFFICIENCY ANALYSIS")
+
+# Variable Declaration
+halfcourt_PPP = 0.0
+transition_PPP = 0.0
+putbacks_PPP = 0.0
+inbounds_PPP = 0.0
+half1_PPP = 0.0
+half2_PPP = 0.0
+
+# Table formation
+headers = [None, None, "TOR", "EFG", "ORR", "TS%", "FTAR", "RSS", "RS", "3JS", "3J", "2JS", "2J", "Overall", None]
+data =  [headers,
+        ["Halfcourt",   100, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, halfcourt_PPP],
+        ["Transition",  100, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, transition_PPP],
+        ["Putbacks",    100, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, putbacks_PPP],
+        ["Inbounds",    100, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, inbounds_PPP],
+        ["1st Half",    100, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, half1_PPP],
+        ["2nd Half",    100, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, half2_PPP]
+        ]
+
+t = Table(data, colWidths=9*mm, rowHeights=5*mm)
+t.setStyle(TableStyle([
+        ('ALIGN',(0,0),(-1,-1),'CENTER'), # Alignment for main table
+        ('ALIGN', (0,0),(0,8),'RIGHT'), # Row Label Alignment
+        ('VALIGN',(0,0),(-1,-1),'MIDDLE'), # Vertical Alignment
+        ('INNERGRID', (2,1), (-2, -1), 0.45, colors.gold), # Add Grid
+        ('BOX', (2,1), (-2,-1), 0.25, colors.gold), # Add Box
+        ('BACKGROUND', (2,1), (-2, -1), colors.navy),
+        ('TEXTCOLOR', (2,1), (-2,-1), colors.wheat),
+        ('FONTSIZE', (0,0), (-1,-1), 6)
+]))
+
+t.wrapOn(pdf, 2*inch, 2.81*inch) # Determine table size
+t.drawOn(pdf, 5.75*inch, 5*inch) # Determine table coords and draw
+
+#*****OFFENSIVE PLAYER ANALYSIS*****
+roster = []
 
 #--------------------------------PAGE 2: DEFENSE----------------------------
 pdf.showPage()  # End previous page, begin new page
